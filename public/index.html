@@ -3,60 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dynamic QR Studio</title>
+  <title>Dynamic QR Studio — Analytics & Smart Redirects</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
 
-  <div class="max-w-5xl mx-auto px-4 py-10">
+  <div class="max-w-6xl mx-auto px-4 py-10">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6 mb-8">
       <div>
         <h1 class="text-3xl font-bold text-indigo-400">Dynamic QR Studio</h1>
-        <p class="text-slate-400 text-sm mt-1">Custom colors ke saath Dynamic QR banayein, link kabhi bhi badlein aur live scans track karein.</p>
+        <p class="text-slate-400 text-sm mt-1">Custom Colors, Smart Redirects (PIN, Expiry, Scan Limit) aur Live Device/City Analytics.</p>
       </div>
     </div>
 
     <!-- Create QR Form -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-10 shadow-lg">
       <h2 class="text-lg font-semibold mb-4 text-white">Naya Dynamic QR Banayein</h2>
-      <form id="createForm" class="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <div class="md:col-span-2">
-          <label class="block text-xs text-slate-400 mb-1">QR Title / Naam *</label>
-          <input type="text" id="title" required placeholder="e.g. Product Packaging"
-            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-xs text-slate-400 mb-1">Destination URL *</label>
-          <input type="text" id="target_url" required placeholder="https://example.com"
-            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-xs text-slate-400 mb-1">Custom Short ID (Optional)</label>
-          <input type="text" id="custom_slug" placeholder="e.g. offer-2026"
-            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+      <form id="createForm" class="space-y-4">
+        <!-- Row 1: Basic Info -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">QR Title / Naam *</label>
+            <input type="text" id="title" required placeholder="e.g. Diwali Offer QR"
+              class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">Destination URL *</label>
+            <input type="text" id="target_url" required placeholder="https://example.com"
+              class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">Custom Short ID (Optional)</label>
+            <input type="text" id="custom_slug" placeholder="e.g. vip-pass"
+              class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+          </div>
         </div>
 
-        <!-- Color Pickers -->
-        <div class="md:col-span-2">
-          <label class="block text-xs text-slate-400 mb-1">QR Dots Color (Foreground)</label>
-          <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5">
-            <input type="color" id="fg_color" value="#000000" class="w-7 h-7 bg-transparent border-0 cursor-pointer" />
-            <span id="fg_label" class="text-xs font-mono text-slate-300">#000000</span>
+        <!-- Row 2: Smart Redirect Rules (Optional) -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 pt-2 border-t border-slate-800/80">
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">Expiry Date & Time (Optional)</label>
+            <input type="datetime-local" id="expires_at"
+              class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">Max Scan Limit (Optional)</label>
+            <input type="number" id="max_scans" min="1" placeholder="e.g. 100 (Unlimited if blank)"
+              class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">Password / PIN Protection (Optional)</label>
+            <input type="text" id="pin_code" maxlength="10" placeholder="e.g. 1234"
+              class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
           </div>
         </div>
-        <div class="md:col-span-2">
-          <label class="block text-xs text-slate-400 mb-1">Background Color</label>
-          <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5">
-            <input type="color" id="bg_color" value="#ffffff" class="w-7 h-7 bg-transparent border-0 cursor-pointer" />
-            <span id="bg_label" class="text-xs font-mono text-slate-300">#ffffff</span>
+
+        <!-- Row 3: Colors & Submit -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 pt-2 border-t border-slate-800/80">
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">QR Dots Color</label>
+            <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5">
+              <input type="color" id="fg_color" value="#000000" class="w-7 h-7 bg-transparent border-0 cursor-pointer" />
+              <span id="fg_label" class="text-xs font-mono text-slate-300">#000000</span>
+            </div>
           </div>
-        </div>
-        <div class="md:col-span-2 flex items-end">
-          <button type="submit"
-            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition cursor-pointer">
-            + Generate Dynamic QR
-          </button>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">Background Color</label>
+            <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5">
+              <input type="color" id="bg_color" value="#ffffff" class="w-7 h-7 bg-transparent border-0 cursor-pointer" />
+              <span id="bg_label" class="text-xs font-mono text-slate-300">#ffffff</span>
+            </div>
+          </div>
+          <div class="md:col-span-2 flex items-end">
+            <button type="submit"
+              class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition cursor-pointer">
+              + Generate Smart QR
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -71,20 +96,32 @@
   </div>
 
   <!-- Edit Modal -->
-  <div id="editModal" class="hidden fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6">
-      <h3 class="text-lg font-bold mb-4">QR Update Karein</h3>
+  <div id="editModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-lg font-bold mb-4">QR & Smart Rules Update Karein</h3>
       <input type="hidden" id="editId" />
-      <div class="space-y-4">
+      <div class="space-y-3">
         <div>
           <label class="block text-xs text-slate-400 mb-1">Title</label>
-          <input type="text" id="editTitle"
-            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+          <input type="text" id="editTitle" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
         </div>
         <div>
           <label class="block text-xs text-slate-400 mb-1">Naya Target URL</label>
-          <input type="text" id="editUrl"
-            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+          <input type="text" id="editUrl" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Expiry Date (Optional)</label>
+            <input type="datetime-local" id="editExpiry" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Max Scans (Optional)</label>
+            <input type="number" id="editMaxScans" min="1" placeholder="Unlimited" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">PIN Code (Blank = No PIN)</label>
+          <input type="text" id="editPin" maxlength="10" placeholder="No PIN" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -96,7 +133,7 @@
             <input type="color" id="editBg" class="w-full h-9 bg-slate-800 border border-slate-700 rounded-lg p-1 cursor-pointer" />
           </div>
         </div>
-        <div class="flex justify-end gap-3 pt-2">
+        <div class="flex justify-end gap-3 pt-3">
           <button onclick="closeModal()" class="px-4 py-2 text-sm text-slate-400 hover:text-white cursor-pointer">Cancel</button>
           <button onclick="saveEdit()" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2 rounded-lg text-sm font-medium cursor-pointer">
             Save Changes
@@ -106,7 +143,65 @@
     </div>
   </div>
 
+  <!-- Analytics Modal -->
+  <div id="analyticsModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-5">
+        <div>
+          <h3 id="analyticsTitle" class="text-xl font-bold text-indigo-400">QR Analytics</h3>
+          <p id="analyticsSubtitle" class="text-xs text-slate-400 mt-0.5"></p>
+        </div>
+        <button onclick="closeAnalytics()" class="text-slate-400 hover:text-white text-lg px-2 cursor-pointer">✕</button>
+      </div>
+
+      <!-- Daily Chart -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-5">
+        <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Last 7 Days Scan Trend</h4>
+        <div class="h-44">
+          <canvas id="scanChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Breakdown Grids -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Devices</h4>
+          <ul id="deviceStats" class="space-y-1.5 text-sm"></ul>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Operating System</h4>
+          <ul id="osStats" class="space-y-1.5 text-sm"></ul>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Top Locations</h4>
+          <ul id="locationStats" class="space-y-1.5 text-sm"></ul>
+        </div>
+      </div>
+
+      <!-- Recent Scan Logs -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+        <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Recent Scan Activity</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-500 border-b border-slate-800">
+              <tr>
+                <th class="py-2">Device / OS</th>
+                <th class="py-2">Browser</th>
+                <th class="py-2">Location</th>
+                <th class="py-2">Time (UTC)</th>
+              </tr>
+            </thead>
+            <tbody id="recentLogsTable" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    let allQRs = [];
+    let scanChartInstance = null;
+
     document.getElementById('fg_color').addEventListener('input', (e) => {
       document.getElementById('fg_label').textContent = e.target.value;
     });
@@ -116,15 +211,24 @@
 
     async function loadQRs() {
       const res = await fetch('/api/qrs');
-      const data = await res.json();
+      allQRs = await res.json();
       const container = document.getElementById('qrList');
 
-      if (data.length === 0) {
+      if (allQRs.length === 0) {
         container.innerHTML = `<p class="text-slate-500 text-sm col-span-2">Abhi tak koi QR code nahi bana hai.</p>`;
         return;
       }
 
-      container.innerHTML = data.map(qr => `
+      container.innerHTML = allQRs.map(qr => {
+        const badges = [];
+        if (qr.pin_code) badges.push(`<span class="bg-purple-500/20 text-purple-300 text-[10px] px-2 py-0.5 rounded">🔒 PIN</span>`);
+        if (qr.max_scans) badges.push(`<span class="bg-amber-500/20 text-amber-300 text-[10px] px-2 py-0.5 rounded">Max: ${qr.max_scans}</span>`);
+        if (qr.expires_at) {
+          const isExp = new Date(qr.expires_at) < new Date();
+          badges.push(`<span class="${isExp ? 'bg-rose-500/20 text-rose-300' : 'bg-sky-500/20 text-sky-300'} text-[10px] px-2 py-0.5 rounded">${isExp ? 'Expired' : '⏳ Expiry Set'}</span>`);
+        }
+
+        return `
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex gap-5 items-center">
           <div class="p-2 rounded-xl shrink-0 border border-slate-700" style="background-color: ${qr.bg_color || '#ffffff'}">
             <img src="${qr.qrImage}" alt="QR" class="w-28 h-28" />
@@ -133,50 +237,61 @@
             <div class="flex items-start justify-between gap-2">
               <h3 class="font-bold text-lg text-white truncate">${qr.title}</h3>
               <span class="bg-indigo-500/20 text-indigo-300 text-xs font-semibold px-2.5 py-1 rounded-full shrink-0">
-                ${qr.scans} Scans
+                ${qr.scans}${qr.max_scans ? '/' + qr.max_scans : ''} Scans
               </span>
             </div>
 
-            <p class="text-xs text-slate-400 mt-1 truncate">
-              <span class="text-slate-500">Static QR Link:</span>
+            ${badges.length ? `<div class="flex flex-wrap gap-1.5 mt-1.5">${badges.join('')}</div>` : ''}
+
+            <p class="text-xs text-slate-400 mt-2 truncate">
+              <span class="text-slate-500">QR Link:</span>
               <a href="${qr.dynamicUrl}" target="_blank" class="text-indigo-400 hover:underline">${qr.dynamicUrl}</a>
             </p>
 
             <p class="text-xs text-emerald-400 mt-1 truncate">
-              <span class="text-slate-500">Redirects to:</span> ${qr.target_url}
+              <span class="text-slate-500">Target:</span> ${qr.target_url}
             </p>
 
             <div class="flex flex-wrap gap-2 mt-4">
+              <button onclick="openAnalytics(${qr.id})"
+                class="bg-indigo-600/25 text-indigo-300 hover:bg-indigo-600/40 text-xs px-3 py-1.5 rounded-lg font-medium transition cursor-pointer">
+                📊 Analytics
+              </button>
               <a href="${qr.qrImage}" download="${qr.slug}-qr.png"
                 class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-lg transition">
-                ⬇ Download PNG
+                ⬇ PNG
               </a>
-              <button onclick="openEdit(${qr.id}, '${qr.title.replace(/'/g, "\'")}', '${qr.target_url}', '${qr.fg_color || '#000000'}', '${qr.bg_color || '#ffffff'}')"
+              <button onclick="openEdit(${qr.id})"
                 class="bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 text-xs px-3 py-1.5 rounded-lg transition cursor-pointer">
                 ✎ Edit
               </button>
               <button onclick="deleteQR(${qr.id})"
                 class="bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 text-xs px-3 py-1.5 rounded-lg transition cursor-pointer">
-                🗑 Delete
+                🗑
               </button>
             </div>
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     document.getElementById('createForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const title = document.getElementById('title').value;
-      const target_url = document.getElementById('target_url').value;
-      const custom_slug = document.getElementById('custom_slug').value;
-      const fg_color = document.getElementById('fg_color').value;
-      const bg_color = document.getElementById('bg_color').value;
+      const payload = {
+        title: document.getElementById('title').value,
+        target_url: document.getElementById('target_url').value,
+        custom_slug: document.getElementById('custom_slug').value,
+        expires_at: document.getElementById('expires_at').value,
+        max_scans: document.getElementById('max_scans').value,
+        pin_code: document.getElementById('pin_code').value,
+        fg_color: document.getElementById('fg_color').value,
+        bg_color: document.getElementById('bg_color').value
+      };
 
       const res = await fetch('/api/qrs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, target_url, custom_slug, fg_color, bg_color })
+        body: JSON.stringify(payload)
       });
 
       const result = await res.json();
@@ -190,12 +305,17 @@
       loadQRs();
     });
 
-    function openEdit(id, title, url, fg, bg) {
-      document.getElementById('editId').value = id;
-      document.getElementById('editTitle').value = title;
-      document.getElementById('editUrl').value = url;
-      document.getElementById('editFg').value = fg;
-      document.getElementById('editBg').value = bg;
+    function openEdit(id) {
+      const qr = allQRs.find(item => item.id === id);
+      if (!qr) return;
+      document.getElementById('editId').value = qr.id;
+      document.getElementById('editTitle').value = qr.title;
+      document.getElementById('editUrl').value = qr.target_url;
+      document.getElementById('editExpiry').value = qr.expires_at || '';
+      document.getElementById('editMaxScans').value = qr.max_scans || '';
+      document.getElementById('editPin').value = qr.pin_code || '';
+      document.getElementById('editFg').value = qr.fg_color || '#000000';
+      document.getElementById('editBg').value = qr.bg_color || '#ffffff';
       document.getElementById('editModal').classList.remove('hidden');
     }
 
@@ -205,19 +325,98 @@
 
     async function saveEdit() {
       const id = document.getElementById('editId').value;
-      const title = document.getElementById('editTitle').value;
-      const target_url = document.getElementById('editUrl').value;
-      const fg_color = document.getElementById('editFg').value;
-      const bg_color = document.getElementById('editBg').value;
+      const payload = {
+        title: document.getElementById('editTitle').value,
+        target_url: document.getElementById('editUrl').value,
+        expires_at: document.getElementById('editExpiry').value,
+        max_scans: document.getElementById('editMaxScans').value,
+        pin_code: document.getElementById('editPin').value,
+        fg_color: document.getElementById('editFg').value,
+        bg_color: document.getElementById('editBg').value
+      };
 
       await fetch(`/api/qrs/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, target_url, fg_color, bg_color })
+        body: JSON.stringify(payload)
       });
 
       closeModal();
       loadQRs();
+    }
+
+    async function openAnalytics(id) {
+      const res = await fetch(`/api/qrs/${id}/analytics`);
+      const data = await res.json();
+      if (!res.ok) return alert(data.error);
+
+      document.getElementById('analyticsTitle').textContent = `Analytics: ${data.qr.title}`;
+      document.getElementById('analyticsSubtitle').textContent = `Total Scans: ${data.qr.scans} | Target: ${data.qr.target_url}`;
+
+      const renderList = (elId, items) => {
+        const el = document.getElementById(elId);
+        if (!items.length) {
+          el.innerHTML = `<li class="text-slate-500 text-xs">No scans yet</li>`;
+          return;
+        }
+        el.innerHTML = items.map(i => `
+          <li class="flex justify-between text-xs">
+            <span class="text-slate-300 truncate">${i.label}</span>
+            <span class="font-semibold text-indigo-400">${i.count}</span>
+          </li>
+        `).join('');
+      };
+
+      renderList('deviceStats', data.byDevice);
+      renderList('osStats', data.byOS);
+      renderList('locationStats', data.byLocation);
+
+      const logsBody = document.getElementById('recentLogsTable');
+      if (!data.recentLogs.length) {
+        logsBody.innerHTML = `<tr><td colspan="4" class="py-3 text-center text-slate-500">Abhi tak koi scan record nahi hai.</td></tr>`;
+      } else {
+        logsBody.innerHTML = data.recentLogs.map(log => `
+          <tr>
+            <td class="py-2">${log.device_type} (${log.os_name})</td>
+            <td class="py-2">${log.browser_name}</td>
+            <td class="py-2">${log.city}, ${log.country}</td>
+            <td class="py-2 text-slate-400">${log.scanned_at}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Render 7-Day Line Chart
+      const ctx = document.getElementById('scanChart').getContext('2d');
+      if (scanChartInstance) scanChartInstance.destroy();
+      scanChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.dailyScans.map(d => d.day),
+          datasets: [{
+            label: 'Scans',
+            data: data.dailyScans.map(d => d.count),
+            borderColor: '#818cf8',
+            backgroundColor: 'rgba(129, 140, 248, 0.15)',
+            fill: true,
+            tension: 0.35
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: '#1e293b' } },
+            x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+          }
+        }
+      });
+
+      document.getElementById('analyticsModal').classList.remove('hidden');
+    }
+
+    function closeAnalytics() {
+      document.getElementById('analyticsModal').classList.add('hidden');
     }
 
     async function deleteQR(id) {

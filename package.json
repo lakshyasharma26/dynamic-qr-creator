@@ -1,6 +1,7 @@
 {
   "name": "dynamic-qr-system",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "Dynamic QR Studio with Advanced Analytics & Smart Redirects",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
